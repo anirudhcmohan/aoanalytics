@@ -17,6 +17,7 @@ app.config.update(
 )
 
 @app.route('/')
+@app.route('/listens')
 def index():
 	data = pd.read_csv('static/Master_Listens_ID.csv')
 	dates = np.unique(data['listentime']).tolist()
@@ -29,6 +30,10 @@ def index():
 		daily_counts.append(np.unique(data[data['listentime'] == dates[i]]['sessid']).size)
 	template_data = [[datemillis[i], daily_counts[i]] for i in range(len(dates))]
 	return render_template('test.html',data=template_data)
+
+@app.route('/farmers')
+def farmers():
+	return "hi"
 
 if __name__ == '__main__':
 	port = int(os.environ.get('PORT', 5000))

@@ -3,6 +3,7 @@ onStart();
 
 // Famers slice
 // Outgoing data
+//tooltips to graph
 
 function plotChart(usedata){
 	var plotdata = [{
