@@ -1,6 +1,5 @@
 Flask==0.9
 Jinja2==2.6
 Cython==0.19.1
-numpy==1.6.1
 pandas==0.10.0
 
