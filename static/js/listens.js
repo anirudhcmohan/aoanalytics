@@ -2,7 +2,8 @@ onStart();
 
 
 // Outgoing data
-//tooltips to graph
+// tooltips to graph
+// play with axes, titles, etc.
 
 function plotChart(usedata){
 	var plotdata = [{
@@ -21,7 +22,7 @@ function getDateRange(){
 	ranges.push(data[0][0]);
 	ranges.push(data[[data.length-1]][0]);
 	return ranges;
-}""
+}
 function addDateSel(){
 	var dateminmax = getDateRange();
 	$('#placeholder').after('<input type="text" size="50" id="datefirst" value="'+(new Date(dateminmax[0])).toLocaleDateString("en-US")+'"/>');
