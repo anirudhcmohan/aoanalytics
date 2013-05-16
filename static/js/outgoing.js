@@ -25,7 +25,7 @@ function addDateSel(){
 	var dateminmax = getDateRange();
 	$('#placeholder').after('<input type="text" size="50" id="datefirst" value="'+(new Date(dateminmax[0])).toLocaleDateString("en-US")+'"/>');
 	$('#datefirst').after('<input type="text" size="50" id="datesecond" value="'+(new Date(dateminmax[1])).toLocaleDateString("en-US")+'"/>');
-	$('#datesecond').after('<select id="timeunit"><option value="1">Daily</option><option value="2">Weekly</option><option value="3">Monthly</option></select>');
+	$('#datesecond').after('<select id="timeunit"><option value="1">Weekly</option><option value="2">Monthly</option></select>');
 	$('#timeunit').after('<input type="submit" id="datechoose" value="choose">');
 	$('#datefirst').glDatePicker({
 		selectedDate: new Date(getDateRange()[0]),
@@ -47,7 +47,7 @@ function addDateSel(){
 
 function textmanage(){
 	$("#loading").remove();
-	$("#listensplot").prepend('<h1>Listens Data</h1>');
+	$("#listensplot").prepend('<h1>Outgoing Data</h1>');
 }
 
 function getDates(){
@@ -108,10 +108,10 @@ function renderNew(){
 	var displayData = getDates();
 	if (displayData != null) {
 		var timeunit = $("#timeunit").find(':selected').val();
-		if(timeunit=='2'){
+		if(timeunit=='1'){
 			displayData = reduceVals(displayData.map(getWeeks));
 		}
-		if(timeunit=='3'){
+		if(timeunit=='2'){
 			displayData = reduceVals(displayData.map(getMonths));
 		}
 		plotChart(displayData);
@@ -119,7 +119,7 @@ function renderNew(){
 }
 
 function onStart(){
-	plotChart(data);
+	plotChart(reduceVals(data.map(getWeeks)));
 	textmanage();
 	addDateSel();
 }

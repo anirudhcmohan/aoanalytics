@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block body %}
+	<h1 id="loading">Chart is loading...</h1>
+	<div id="listensplot">
+		<div id="placeholder" style="width:600px;height:300px"></div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script type="text/javascript" src="/static/js/jquery.flot.min.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.flot.time.min.js"></script>
+	<script>
+		var data = {{ data }};
+	</script>
+	<link href="/static/css/glDatePicker.default.css" rel="stylesheet" type="text/css">
+    <script src="/static/js/glDatePicker.min.js"></script>
+	<script type="text/javascript" src="/static/js/outgoing.js"></script>
+{% endblock %}
