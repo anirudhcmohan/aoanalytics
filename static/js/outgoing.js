@@ -12,20 +12,22 @@ function plotChart(usedata){
 			mode: "time"
 		}
 	};
-	$.plot($("#placeholder"), plotdata, options);
+	$.plot($("#placeholder1"), plotdata, options);
 } 
 
 function getDateRange(){
 	var ranges = [];
-	ranges.push(data[0][0]);
-	ranges.push(data[[data.length-1]][0]);
+	ranges.push(data_count[0][0]);
+	ranges.push(data_count[[data_count.length-1]][0]);
 	return ranges;
 }
+
 function addDateSel(){
 	var dateminmax = getDateRange();
-	$('#placeholder').after('<input type="text" size="50" id="datefirst" value="'+(new Date(dateminmax[0])).toLocaleDateString("en-US")+'"/>');
+	$('#placeholder1').after('<input type="text" size="50" id="datefirst" value="'+(new Date(dateminmax[0])).toLocaleDateString("en-US")+'"/>');
 	$('#datefirst').after('<input type="text" size="50" id="datesecond" value="'+(new Date(dateminmax[1])).toLocaleDateString("en-US")+'"/>');
-	$('#datesecond').after('<select id="timeunit"><option value="1">Weekly</option><option value="2">Monthly</option></select>');
+	$('#datesecond').after('<select id="datadisplaytype"><option value="1">Number Listens</option><option value="2">Average Duration</option></select>');
+	$('#datadisplaytype').after('<select id="timeunit"><option value="1">Weekly</option><option value="2">Monthly</option></select>');
 	$('#timeunit').after('<input type="submit" id="datechoose" value="choose">');
 	$('#datefirst').glDatePicker({
 		selectedDate: new Date(getDateRange()[0]),
@@ -47,10 +49,10 @@ function addDateSel(){
 
 function textmanage(){
 	$("#loading").remove();
-	$("#listensplot").prepend('<h1>Outgoing Data</h1>');
+	$("#outgoingcountplot").prepend('<h1>Outgoing Data</h1>');
 }
 
-function getDates(){
+function getDates(datatype){
 	var firsttime = (new Date($('#datefirst').val())).getTime();
 	var secondtime = (new Date($('#datesecond').val())).getTime();
 	if (secondtime < firsttime){
@@ -59,12 +61,24 @@ function getDates(){
 	}
 	else{
 		var daterange = [];
-		for(var i = 0; i < data.length; i++){
-			if (data[i][0] > secondtime){
-				break;
+		if(datatype=='1'){
+			for(var i = 0; i < data_count.length; i++){
+				if (data_count[i][0] > secondtime){
+					break;
+				}
+				if (data_count[i][0] >= firsttime){
+					daterange.push(data_count[i]);
+				}
 			}
-			if (data[i][0] >= firsttime){
-				daterange.push(data[i]);
+		}
+		else{
+			for(var i = 0; i < data_duration.length; i++){
+				if (data_duration[i][0] > secondtime){
+					break;
+				}
+				if (data_duration[i][0] >= firsttime){
+					daterange.push(data_duration[i]);
+				}
 			}
 		}
 		return daterange;
@@ -87,45 +101,54 @@ function getWeeks(datecount){
 	return [date_month,count];
 }
 
-function reduceVals(datecounts){
+function reduceVals(datecounts, reducetype){
 	var reducedcounts = {}
 	for (var i = 0; i < datecounts.length; i++){
 		if (reducedcounts[datecounts[i][0]] == undefined){
-			reducedcounts[datecounts[i][0]] = datecounts[i][1];
+			reducedcounts[datecounts[i][0]] = [datecounts[i][1],1];
 		}
 		else {
-			reducedcounts[datecounts[i][0]] += datecounts[i][1];	
+			reducedcounts[datecounts[i][0]][0] += datecounts[i][1];
+			reducedcounts[datecounts[i][0]][1] += 1;	
 		}
 	}
 	var retval = []
-	for (var key in reducedcounts){
-		retval.push([key,reducedcounts[key]]);
+	if (reducetype == "sum"){
+		for (var key in reducedcounts){
+			retval.push([key,reducedcounts[key][0]]);
+		}
+	}
+	else {
+		for (var key in reducedcounts){
+			retval.push([key,reducedcounts[key][0]/reducedcounts[key][1]]);
+		}	
 	}
 	return retval;
 }
 
 function renderNew(){
-	var displayData = getDates();
+	var timeunit = $("#timeunit").find(':selected').val();
+	var datatype = $("#datadisplaytype").find(':selected').val();
+	var displayData = getDates(datatype);
 	if (displayData != null) {
-		var timeunit = $("#timeunit").find(':selected').val();
-		if(timeunit=='1'){
-			displayData = reduceVals(displayData.map(getWeeks));
+		if(timeunit=='1' && datatype=='1'){
+			displayData = reduceVals(displayData.map(getWeeks),"sum");
 		}
-		if(timeunit=='2'){
-			displayData = reduceVals(displayData.map(getMonths));
+		else if(timeunit=='2' && datatype=='1'){
+			displayData = reduceVals(displayData.map(getMonths),"sum");
+		}
+		else if(timeunit=='1' && datatype=='2'){
+			displayData = reduceVals(displayData.map(getWeeks),"mean");
+		}
+		else{
+			displayData = reduceVals(displayData.map(getMonths),"mean");
 		}
 		plotChart(displayData);
 	}
 }
 
 function onStart(){
-	plotChart(reduceVals(data.map(getWeeks)));
+	plotChart(reduceVals(data_count.map(getWeeks),"sum"));
 	textmanage();
 	addDateSel();
 }
-
-
-
-
-
-

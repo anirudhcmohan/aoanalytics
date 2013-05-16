@@ -43,8 +43,9 @@ def farmers():
 def outgoing():
 	data = pd.read_csv('static/AO_Outgoing_Aug.csv')
 	data = data[data['duration'] != "N/A"]
-	template_data = dailydata(data, "date","UID")
-	return render_template('outgoing.html',data=template_data)
+	data['duration'] = map(int,data['duration'].values)
+	[count_data, duration_data] = dailyoutdata(data, "date","UID","duration")
+	return render_template('outgoing.html',data1=count_data, data2=duration_data)
 
 def dailydata(data,datefield,uid):
 	dates = np.unique(data[datefield]).tolist()
@@ -57,6 +58,20 @@ def dailydata(data,datefield,uid):
 		daily_counts.append(np.unique(data[data[datefield] == dates[i]][uid]).size)
 	template_data = [[datemillis[i], daily_counts[i]] for i in range(len(dates))]
 	return template_data
+
+def dailyoutdata(data,datefield,uid,duration):
+	dates = np.unique(data[datefield]).tolist()
+	datetimes = [date(int(dt.split('/')[2]),int(dt.split('/')[0]),int(dt.split('/')[1])) for dt in dates]
+	datetimes.sort()
+	datemillis = [timegm(dt.timetuple())*1000 for dt in datetimes]
+	dates = [datetime.strftime(dt, '%-m/%-d/%Y') for dt in datetimes]
+	daily_counts = []; daily_duration = []
+	for i in range(len(dates)):
+		daily_counts.append((data[data[datefield] == dates[i]][uid]).size)
+		daily_duration.append((data[data[datefield] == dates[i]][duration]).mean())
+	count_data = [[datemillis[i], daily_counts[i]] for i in range(len(dates))]
+	duration_data = [[datemillis[i], daily_duration[i]] for i in range(len(dates))]
+	return [count_data, duration_data]
 
 if __name__ == '__main__':
 	port = int(os.environ.get('PORT', 5000))
