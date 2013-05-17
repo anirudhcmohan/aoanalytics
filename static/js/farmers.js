@@ -3,13 +3,32 @@ onStart();
 function onStart(){
 	for(var key in calls) break;
 	textmanage();
-	plotChart(key, calls[key]);
+	plotPerFarmerChart(key, calls[key]);
 	addFarmerSel();
+	plotAllFarmersChart(counts);
 }
 
-function plotChart(farmerid, usedata){
-	$("h3").remove();
-	$("h1").after('<h3>Total calls by farmer '+ farmerid + ': ' +usedata.length+'</h3>');
+function plotAllFarmersChart(usedata){
+	$("#plot2subtitle").remove();
+	$("#chartitle2").after('<h3 id="plot2subtitle">Sorted by descending order of usage</h3>');
+	var plotdata = [{
+		data: usedata,
+		bars: {
+			show: true
+		}
+	}];
+	// var options = {
+	// 	xaxis:{
+	// 		mode: "time"
+	// 	}
+
+	// };
+	$.plot($("#placeholder2"), plotdata);
+}
+
+function plotPerFarmerChart(farmerid, usedata){
+	$("#plot1subtitle").remove();
+	$("#chartitle").after('<h3 id="plot1subtitle">Total calls by farmer '+ farmerid + ': ' +usedata.length+'</h3>');
 	var plotdata = [{
 		data: usedata,
 		bars: {
@@ -27,7 +46,8 @@ function plotChart(farmerid, usedata){
 
 function textmanage(){
 	$("#loading").remove();
-	$("#farmersplot").prepend('<h1 id="chartitle">Listens Data by Farmer</h1>');
+	$("#farmersplot").prepend('<h1 id="chartitle">Listens Data by Individual Farmer</h1>');
+	$("#farmershistogram").prepend('<h1 id="chartitle2">Listens Data for All Farmers</h1>');
 }
 
 function addFarmerSel(){
@@ -43,5 +63,5 @@ function addFarmerSel(){
 
 function renderNew(){
 	var farmerid = $("#farmerbox").find(':selected').val();
-	plotChart(farmerid, calls[farmerid]);
+	plotPerFarmerChart(farmerid, calls[farmerid]);
 }

@@ -6,7 +6,6 @@ import os, calendar, json
 from datetime import datetime,date
 from calendar import *
 
-
 app = Flask(__name__)
 
 app.config.update(
@@ -35,8 +34,9 @@ def farmers():
 		farmer_calls[user][call] += 1
 	for key in farmer_calls:
 		farmer_calls[key] = [[dt,farmer_calls[key][dt]] for dt in farmer_calls[key]]
-	counts = [value for value in data['userid'].value_counts().values]
-	print farmer_calls
+	counts = []
+	for i in range(len(data['userid'].value_counts().values)):
+		counts.append([i+1,data['userid'].value_counts().values[i]])
 	return render_template('farmers.html',counts=counts,calls=farmer_calls)
 
 @app.route('/outgoing')
