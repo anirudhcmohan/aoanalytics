@@ -8,6 +8,20 @@ function onStart(){
 	plotAllFarmersChart(counts);
 }
 
+function showTooltip(x, y, contents) {
+	$("<div id='tooltip'>" + contents + "</div>").css({
+		position: "absolute",
+		display: "none",
+		top: y + 5,
+		left: x + 5,
+		border: "1px solid #fdd",
+		padding: "2px",
+		"background-color": "#fee",
+		opacity: 0.80
+	}).appendTo("body").fadeIn(200);
+}
+
+
 function plotAllFarmersChart(usedata){
 	$("#plot2subtitle").remove();
 	$("#chartitle2").after('<h3 id="plot2subtitle">Sorted by descending order of usage</h3>');
@@ -17,13 +31,33 @@ function plotAllFarmersChart(usedata){
 			show: true
 		}
 	}];
-	// var options = {
-	// 	xaxis:{
-	// 		mode: "time"
-	// 	}
+	var options = {
+		// xaxis:{
+		// 	mode: "time"
+		// }
+		grid: {
+			hoverable: true
+		}
+	};
+	$.plot($("#placeholder2"), plotdata, options);
+}
 
-	// };
-	$.plot($("#placeholder2"), plotdata);
+$("#placeholder2").bind("plothover",function(event, pos, item){
+	if(item){
+		$("#tooltip").remove();
+		var percents = computePercentiles(item.datapoint[0]+1);
+		showTooltip(item.pageX,item.pageY, percents[0]+"% of farmers make " + percents[1] + "% of the calls");
+	}
+
+});
+
+function computePercentiles(stopIndex){
+	var callCount = 0;
+	var countvals = counts.map(function(i){return i[1];}) 
+	for(var i = 0; i < stopIndex; i++){
+		callCount += countvals[i];
+	}
+	return [(stopIndex/totfarmers*100).toFixed(1), (callCount/totcalls*100).toFixed(1)];
 }
 
 function plotPerFarmerChart(farmerid, usedata){

@@ -37,7 +37,7 @@ def farmers():
 	counts = []
 	for i in range(len(data['userid'].value_counts().values)):
 		counts.append([i+1,data['userid'].value_counts().values[i]])
-	return render_template('farmers.html',counts=counts,calls=farmer_calls)
+	return render_template('farmers.html',counts=counts,calls=farmer_calls,totcalls=sum(data['userid'].value_counts().values))
 
 @app.route('/outgoing')
 def outgoing():

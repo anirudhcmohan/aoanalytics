@@ -7,11 +7,28 @@ function plotChart(usedata){
 	var plotdata = [{
 		data: usedata,
 	}];
-	var options = {
-		xaxis:{
-			mode: "time"
-		}
-	};
+	if (usedata.length < 50){
+		var options = {
+			xaxis:{
+				mode: "time"
+			},
+			series:{
+				lines:{
+					show: true
+				},
+				points:{
+					show:true
+				}
+			}
+		};
+	}
+	else{
+		var options = {
+			xaxis:{
+				mode: "time"
+			}
+		};
+	}
 	$.plot($("#placeholder1"), plotdata, options);
 } 
 
