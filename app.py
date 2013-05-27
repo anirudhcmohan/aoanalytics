@@ -47,6 +47,10 @@ def outgoing():
 	[count_data, duration_data] = dailyoutdata(data, "date","UID","duration")
 	return render_template('outgoing.html',data1=count_data, data2=duration_data)
 
+@app.route('/topics')
+def topics():
+	return "Helo world"
+
 def dailydata(data,datefield,uid):
 	dates = np.unique(data[datefield]).tolist()
 	datetimes = [date(int(dt.split('/')[2]),int(dt.split('/')[0]),int(dt.split('/')[1])) for dt in dates]

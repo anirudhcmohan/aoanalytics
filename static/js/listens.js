@@ -15,7 +15,7 @@ function plotChart(usedata){
 				lines:{
 					show: true
 				},
-				points:{
+		 			points:{
 					show:true
 				}
 			}
@@ -63,7 +63,7 @@ function addDateSel(){
 
 function textmanage(){
 	$("#loading").remove();
-	$("#listensplot").prepend('<h1>Listens Data</h1>');
+	$("#listensplot").prepend('<h1>Listens Data (farmer dial-ins)</h1>');
 }
 
 function getDates(){

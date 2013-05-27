@@ -3,7 +3,7 @@ onStart();
 // tooltips to graph
 // play with axes, titles, etc.
 
-function plotChart(usedata){
+function plotChart(usedata, ylab){
 	var plotdata = [{
 		data: usedata,
 	}];
@@ -30,6 +30,12 @@ function plotChart(usedata){
 		};
 	}
 	$.plot($("#placeholder1"), plotdata, options);
+	if (ylab){
+		$('#yaxis').text('Average listen duration (sec)');
+	}
+	else{
+		$('#yaxis').text('Number of listens');	
+	}
 } 
 
 function getDateRange(){
@@ -66,7 +72,7 @@ function addDateSel(){
 
 function textmanage(){
 	$("#loading").remove();
-	$("#outgoingcountplot").prepend('<h1>Outgoing Data</h1>');
+	$("#outgoingcountplot").prepend('<h1>Outgoing Data (farmers listening to push calls) </h1>');
 }
 
 function getDates(datatype){
@@ -147,6 +153,7 @@ function renderNew(){
 	var timeunit = $("#timeunit").find(':selected').val();
 	var datatype = $("#datadisplaytype").find(':selected').val();
 	var displayData = getDates(datatype);
+	var axislab = false;
 	if (displayData != null) {
 		if(timeunit=='1' && datatype=='1'){
 			displayData = reduceVals(displayData.map(getWeeks),"sum");
@@ -156,16 +163,18 @@ function renderNew(){
 		}
 		else if(timeunit=='1' && datatype=='2'){
 			displayData = reduceVals(displayData.map(getWeeks),"mean");
+			axislab = true;
 		}
 		else{
 			displayData = reduceVals(displayData.map(getMonths),"mean");
+			axislab = true;
 		}
-		plotChart(displayData);
+		plotChart(displayData, axislab);
 	}
 }
 
 function onStart(){
-	plotChart(reduceVals(data_count.map(getWeeks),"sum"));
+	plotChart(reduceVals(data_count.map(getWeeks),"sum"),false);
 	textmanage();
 	addDateSel();
 }
